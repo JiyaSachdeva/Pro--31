@@ -1,5 +1,16 @@
+const Engine = Matter.Engine;
+const World= Matter.World;
+const Bodies = Matter.Bodies;
+const Constraint = Matter.Constraint;
+
 var walkingaa,walking;
 var thunder1,thunder2,thunder3,thunder4,thunder;
+var thundergroup;
+var rand;
+
+var maxdrops = 100;
+    var drops = [];
+    
 
 function preload(){
     walkingaa = loadAnimation("walking_1.png","walking_2.png","walking_3.png","walking_4.png","walking_5.png","walking_6.png","walking_7.png","walking_8.png");
@@ -11,43 +22,63 @@ function preload(){
 
 function setup(){
    createCanvas(500,600);
-    walking = createSprite(200,550,20,20);
-    walking.addAnimation("walkingaa");
-
+   engine = Engine.create();
+   world = engine.world;
+    walking = createSprite(200,480,20,20);
+    walking.addAnimation("walking",walkingaa);
+    walking.scale = 0.3;
     
+    for (var i=0; i < maxdrops; i++){
+        drops.push(new Drop (random(0,800),random(0,400)))
+
+    }
+    
+
+    thundergroup = new Group();
+
 }
 
 function draw(){
     background(0);
+    Engine.update(engine);
     thunderstome();
 
-    var maxdrops = 100;
-    var drops = [];
-    for (var i=0; i < maxdrops; i++){
-        drops.push(new Drop (random(0,400),random(0,400)))
+
+    for (var a = 1; a <maxdrops; a++){
+        drops[a].display();
+        drops[a].spwanRain();
 
     }
    
+
     drawSprites();
 }   
 
 function thunderstome(){
+     rand = Math.round(random(1,4));
+
     if (frameCount%80===0){
         thunder = createSprite(200,100,20,20);
         thunder.x = Math.round(random(200,350));
-        thunder.lifetime=5;
-        var rand = Math.random(round(1,4));
+        thunder.scale = 0.5;
+        //thunder.lifetime=4;
         switch(rand){
-            case 1:thunder.addImage ("thunder1");
+            case 1:thunder.addImage(thunder1);
             break;
-            case 2: thunder.addImage("thunder2");
+            case 2: thunder.addImage(thunder2);
             break;
-            case 3: thunder.addImage("thunder3");
+            case 3: thunder.addImage(thunder3);
             break;
-            case 4: thunder.addImage("thunder4");
+            case 4: thunder.addImage(thunder4);
             break;
             default : break 
         }
-
+        thundergroup.add(thunder);    
+        console.log(rand)
     }
+
+if (frameCount%100===0){
+    thundergroup.destroyEach();
+}
+
 }
